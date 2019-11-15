@@ -1,18 +1,28 @@
 package at.htl.formula1.entity;
 
 import javax.persistence.*;
+import javax.ws.rs.Path;
 
 /**
  * Formula1 - Result
  * <p>
  * The id's are assigned by the database.
  */
+@Entity
+/*
+@NamedQueries{(
+       @NamedQuery(name = "Result.getScore", query = "select r from Result r")
+)}
+*/
 public class Result {
 
     @Transient
     public int[] pointsPerPosition = {0, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     @ManyToOne
     private Race race;
     private int position;

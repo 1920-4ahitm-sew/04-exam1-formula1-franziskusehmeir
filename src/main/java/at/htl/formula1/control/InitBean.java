@@ -9,17 +9,27 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.json.JsonArray;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.io.IOException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -34,12 +44,13 @@ public class InitBean {
     @Inject
     ResultsRestClient client;
 
-
+    @Transactional
     public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
 
         readTeamsAndDriversFromFile(TEAM_FILE_NAME);
         readRacesFromFile(RACES_FILE_NAME);
-        client.readResultsFromEndpoint();
+        //client.readResultsFromEndpoint();
+
 
     }
 
@@ -48,8 +59,23 @@ public class InitBean {
      *
      * @param racesFileName
      */
+
     private void readRacesFromFile(String racesFileName) {
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+        URL url = Thread.currentThread().getContextClassLoader()
+                .getResource(racesFileName);
+        try (Stream<String> stream = Files.lines(Paths.get(url.getPath()))) {
+            stream
+                .skip(1)
+                .map(s -> s.split(";"))
+                .map(a -> new Race(Long.parseLong(a[0]), a[1], LocalDate.parse(a[2], formatter)))
+                //.forEach(System.out::println);
+                .forEach(em::persist);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -61,6 +87,23 @@ public class InitBean {
      * @param teamFileName
      */
     private void readTeamsAndDriversFromFile(String teamFileName) {
+        /*
+        String[] acLine = new String[3];
+
+        URL url = Thread.currentThread().getContextClassLoader()
+                .getResource(teamFileName);
+        try (Stream<String> stream = Files.lines(Paths.get(url.getPath()))) {
+            stream
+                    .skip(1)
+                    .map(s -> s.split(";"))
+                    .map(a -> new Team(a[0]))
+                    .map(b -> new Driver(a[1], a[0]))
+                    .forEach(System.out::println);
+            persistTeamAndDrivers(acLine)
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
 
     }
 
@@ -76,6 +119,7 @@ public class InitBean {
      */
 
     private void persistTeamAndDrivers(String[] line) {
+
 
     }
 

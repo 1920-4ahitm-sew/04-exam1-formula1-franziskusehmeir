@@ -1,15 +1,20 @@
 package at.htl.formula1.entity;
 
 import javax.persistence.*;
+import javax.ws.rs.Path;
 
 /**
  * Formula1 - Team
  * <p>
  * The id's are assigned by the database.
  */
+@Entity
 public class Team {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
 
     //region Constructors

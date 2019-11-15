@@ -87,9 +87,11 @@ public class InitBean {
      * @param teamFileName
      */
     private void readTeamsAndDriversFromFile(String teamFileName) {
-        /*
-        String[] acLine = new String[3];
 
+        //String[] acLine = new String[3];
+        //persistTeamAndDrivers(acLine);
+
+        /*
         URL url = Thread.currentThread().getContextClassLoader()
                 .getResource(teamFileName);
         try (Stream<String> stream = Files.lines(Paths.get(url.getPath()))) {
@@ -97,9 +99,8 @@ public class InitBean {
                     .skip(1)
                     .map(s -> s.split(";"))
                     .map(a -> new Team(a[0]))
-                    .map(b -> new Driver(a[1], a[0]))
+                    .map(b -> new Driver(b[1], b[0]))
                     .forEach(System.out::println);
-            persistTeamAndDrivers(acLine)
         } catch (IOException e) {
             e.printStackTrace();
         }

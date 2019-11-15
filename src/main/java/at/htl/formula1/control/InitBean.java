@@ -87,9 +87,26 @@ public class InitBean {
      * @param teamFileName
      */
     private void readTeamsAndDriversFromFile(String teamFileName) {
+        /*
+        String[] acLine = new String[3];
+        persistTeamAndDrivers(acLine);
 
-        //String[] acLine = new String[3];
-        //persistTeamAndDrivers(acLine);
+        try {
+        BufferedReader reader = reader = new BufferedReader(new FileReader(teamFileName));
+
+        List<String> lines = new ArrayList<>();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            acLine[0] = line;
+            System.out.println(acLine[0]);
+        }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
 
         /*
         URL url = Thread.currentThread().getContextClassLoader()
@@ -105,6 +122,7 @@ public class InitBean {
             e.printStackTrace();
         }
         */
+
 
     }
 

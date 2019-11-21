@@ -9,11 +9,15 @@ import javax.ws.rs.Path;
  * The id's are assigned by the database.
  */
 @Entity
-/*
-@NamedQueries{(
-       @NamedQuery(name = "Result.getScore", query = "select r from Result r")
-)}
-*/
+@Table(name = "F1_RESULT")
+@NamedQueries({
+        @NamedQuery(name = "Result.getPointsSumOfDriver",
+                query = "select sum(rs.points) from Result rs where rs.driver.name = :NAME"),
+        @NamedQuery(name = "Result.findWinnerOfRace",
+                query = "select rs.driver from Result rs where rs.race.country = :COUNTRY and rs.position = 1"),
+        @NamedQuery(name = "Result.findRacesWonByTeam",
+                query = "select rs.race from Result rs where rs.driver.team.name = :NAME and rs.position = 1")
+})
 public class Result {
 
     @Transient

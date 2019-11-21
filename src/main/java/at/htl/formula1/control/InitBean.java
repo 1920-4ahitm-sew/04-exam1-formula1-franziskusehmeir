@@ -3,6 +3,7 @@ package at.htl.formula1.control;
 import at.htl.formula1.boundary.ResultsRestClient;
 import at.htl.formula1.entity.Driver;
 import at.htl.formula1.entity.Race;
+import at.htl.formula1.entity.Result;
 import at.htl.formula1.entity.Team;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -49,9 +50,7 @@ public class InitBean {
 
         readTeamsAndDriversFromFile(TEAM_FILE_NAME);
         readRacesFromFile(RACES_FILE_NAME);
-        //client.readResultsFromEndpoint();
-
-
+        client.readResultsFromEndpoint();
     }
 
     /**
@@ -87,42 +86,19 @@ public class InitBean {
      * @param teamFileName
      */
     private void readTeamsAndDriversFromFile(String teamFileName) {
-        /*
-        String[] acLine = new String[3];
-        persistTeamAndDrivers(acLine);
 
         try {
-        BufferedReader reader = reader = new BufferedReader(new FileReader(teamFileName));
-
-        List<String> lines = new ArrayList<>();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            acLine[0] = line;
-            System.out.println(acLine[0]);
-        }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            InputStreamReader streamReader = new InputStreamReader(this.getClass().getResourceAsStream("/" + teamFileName), "UTF-8");
+            BufferedReader reader = new BufferedReader(streamReader);
+            reader.readLine();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] row = line.split(";");
+                persistTeamAndDrivers(row);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        */
-
-
-        /*
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource(teamFileName);
-        try (Stream<String> stream = Files.lines(Paths.get(url.getPath()))) {
-            stream
-                    .skip(1)
-                    .map(s -> s.split(";"))
-                    .map(a -> new Team(a[0]))
-                    .map(b -> new Driver(b[1], b[0]))
-                    .forEach(System.out::println);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
-
 
     }
 
@@ -139,6 +115,20 @@ public class InitBean {
 
     private void persistTeamAndDrivers(String[] line) {
 
+        List<Team> teams = em.createNamedQuery("Team.findByName", Team.class).setParameter("NAME", line[0]).getResultList();
+
+        Team team;
+        if(teams.isEmpty()){
+            team = new Team(line[0]);
+            em.persist(team);
+        } else {
+            team = teams.get(0);
+        }
+
+        Driver driver1 = new Driver(line[1], team);
+        em.persist(driver1);
+        Driver driver2 = new Driver(line[2], team);
+        em.persist(driver2);
 
     }
 
